@@ -1,6 +1,7 @@
 import type { NextPage } from 'next'
 import { gql, GraphQLClient } from 'graphql-request'
 import Router from 'next/router'
+import Image from 'next/image'
 
 export const getStaticProps = async () => {
   const url = process.env.ENDPOINT
@@ -38,7 +39,23 @@ const Home: NextPage = ({ data: { cars } }) => {
       {cars.map((car) => (
         <div key={car.slug} onClick={() => handleRedirect(car.slug)}>
           <h2>{car.name}</h2>
-          <img src={car.image[0].url} style={{ width: '250px' }} />
+          <div
+            style={{
+              flex: 1,
+              width: '550px',
+              height: '250px',
+              position: 'relative'
+            }}
+          >
+            <Image
+              src={car.image[0].url}
+              width={0}
+              height={0}
+              alt='car'
+              layout='fill'
+              objectFit='contain'
+            />
+          </div>
           <span>{car.price}</span>
         </div>
       ))}
