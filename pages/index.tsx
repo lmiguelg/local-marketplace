@@ -1,65 +1,52 @@
 import type { NextPage } from 'next'
-import { gql, GraphQLClient } from 'graphql-request'
 import Router from 'next/router'
-import Image from 'next/image'
+import {
+  Button,
+  Flex,
+  Heading,
+  Input,
+  Switch,
+  useColorMode,
+  useColorModeValue
+} from '@chakra-ui/react'
 
-export const getStaticProps = async () => {
-  const url = process.env.ENDPOINT
-  const client = new GraphQLClient(url, {
-    headers: {
-      Authorization: process.env.GRAPHQL_CMS_TOKEN
-    }
-  })
-  const query = gql`
-    query {
-      cars {
-        createdAt
-        id
-        name
-        year
-        price
-        slug
-        image {
-          url
-          id
-        }
-      }
-    }
-  `
-  const data = await client.request(query)
-  return { props: { data } }
-}
-
-const Home: NextPage = ({ data: { cars } }) => {
-  const handleRedirect = (slug: string) => Router.push(`/car/${slug}`)
+const Home: NextPage = () => {
+  const { toggleColorMode } = useColorMode()
+  const formBgColor = useColorModeValue('gray.200', 'gray.900')
 
   return (
-    <div>
-      <h1>Home</h1>
-      {cars.map((car) => (
-        <div key={car.slug} onClick={() => handleRedirect(car.slug)}>
-          <h2>{car.name}</h2>
-          <div
-            style={{
-              flex: 1,
-              width: '550px',
-              height: '250px',
-              position: 'relative'
-            }}
-          >
-            <Image
-              src={car.image[0].url}
-              width={0}
-              height={0}
-              alt='car'
-              layout='fill'
-              objectFit='contain'
-            />
-          </div>
-          <span>{car.price}</span>
-        </div>
-      ))}
-    </div>
+    <Flex height='100vh' direction='column'>
+      <Flex direction='row' justify='end' alignItems='center'>
+        ☀️
+        <Switch
+          id='colorMode'
+          colorScheme='teal'
+          p={2}
+          onChange={toggleColorMode}
+        />
+        🌛
+      </Flex>
+      <Flex height='100vh' alignItems='center' justifyContent='center'>
+        <Flex direction='column' background={formBgColor} p={12} rounded={6}>
+          <Heading mb={6}>Login</Heading>
+          <Input
+            placeholder='email@email.com'
+            variant='filled'
+            mb={3}
+            type='email'
+          />
+          <Input
+            placeholder='**********'
+            variant='filled'
+            mb={6}
+            type='password'
+          />
+          <Button colorScheme='teal' onClick={() => Router.push('/car')}>
+            Log in
+          </Button>
+        </Flex>
+      </Flex>
+    </Flex>
   )
 }
 
